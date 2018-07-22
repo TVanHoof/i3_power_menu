@@ -19,18 +19,6 @@ class PowerMenu():
         reboot = gtk.Button("reboot")
         logout = gtk.Button("logout")
 
-#        pixbuf = gtk.gdk.pixbuf_new_from_file_at_scale("~/workspace/power_menu/shutdown.png", width=150, height=150, preserve_aspect_ratio=True)
-#        image = gtk.image_new_from_pixbuf(pixbuf)
-#        shutdown.set_image(image)
-#
-#        pixbuf = gtk.gdk.pixbuf_new_from_file_at_scale("~/workspace/power_menu/reboot.png", width=150, height=150, preserve_aspect_ratio=True)
-#        image = gtk.image_new_from_pixbuf(pixbuf)
-#        reboot.set_image(image)
-#
-#        pixbuf = gtk.gdk.pixbuf_new_from_file_at_scale("~/workspace/power_menu/logout.png", width=150, height=150, preserve_aspect_ratio=True)
-#        image = gtk.image_new_from_pixbuf(pixbuf)
-#        logout.set_image(image)
-        
         shutdown.connect("clicked",self.menu, 1)
         reboot.connect("clicked",self.menu, 2)
         logout.connect("clicked",self.menu, 3)
@@ -68,11 +56,11 @@ class PowerMenu():
 
     def shutdown(self):
         print "shutdown"
-        os.system("poweroff")
+        os.system("sudo shutdown -P now")
 
     def reboot(self):
         print "reboot"
-        os.system("reboot")
+        os.system("sudo reboot")
 
     def logout(self):
         username = os.popen("whoami").read()

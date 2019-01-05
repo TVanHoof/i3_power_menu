@@ -39,7 +39,7 @@ class PowerMenu():
         elif ord('l') == event.keyval:
             self.logout()
         else:
-            print event
+            print(event)
 
     def menu(self, widget, choice):
         # 1 => shutdown
@@ -52,15 +52,13 @@ class PowerMenu():
         elif 3 == choice:
             self.logout()
         else:
-            print error
+            print(error)
 
     def shutdown(self):
-        print "shutdown"
-        os.system("sudo shutdown -P now")
+        os.system("shutdown -P now")
 
     def reboot(self):
-        print "reboot"
-        os.system("sudo reboot")
+        os.system("reboot")
 
     def logout(self):
         username = os.popen("whoami").read()

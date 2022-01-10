@@ -1,58 +1,53 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
-import gtk
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
 import os
+
+SHUTDOWN = 1
+REBOOT = 2
+LOGOUT = 3
+
+NUM = 0
+STR = 1
 
 class PowerMenu():
     def __init__(self):
-        self.window = gtk.Window();
+        self.actions = {(0,"quit"): Gtk.main_quit}
+        self.window = Gtk.Window();
         self.window.set_size_request(400,150)
         self.window.add(self.create_buttons())
-        self.window.connect("delete-event", gtk.main_quit)
+        self.window.connect("delete-event", Gtk.main_quit)
         self.window.connect("key-release-event", self.on_key_release)
         self.window.show_all()
 
+    def add_button_and_connect(self, layout, caption, menuval, action):
+        button = Gtk.Button(caption)
+        button.connect("clicked", self.menu, menuval)
+        layout.pack_start(button, True, True, 0)
+        self.actions[(menuval, caption)] = action
+
+        return button
+
     def create_buttons(self):
-        my_layout = gtk.HBox();
+        my_layout = Gtk.HBox();
 
-        shutdown = gtk.Button("shutdown")
-        reboot = gtk.Button("reboot")
-        logout = gtk.Button("logout")
-
-        shutdown.connect("clicked",self.menu, 1)
-        reboot.connect("clicked",self.menu, 2)
-        logout.connect("clicked",self.menu, 3)
-
-        my_layout.pack_start(shutdown, True, True, 0)
-        my_layout.pack_start(reboot, True, True, 0)
-        my_layout.pack_start(logout, True, True, 0)
+        self.add_button_and_connect(my_layout, "shutdown", SHUTDOWN, self.shutdown)
+        self.add_button_and_connect(my_layout, "reboot", REBOOT, self.reboot)
+        self.add_button_and_connect(my_layout, "logout", LOGOUT, self.logout)
 
         return my_layout
 
     def on_key_release(self, widget, event, data=None):
-        if ord('q') == event.keyval:
-            gtk.main_quit()
-        elif ord('s') == event.keyval:
-            self.shutdown()
-        elif ord('r') == event.keyval:
-            self.reboot()
-        elif ord('l') == event.keyval:
-            self.logout()
-        else:
-            print(event)
+        for index_tuple in self.actions.keys():
+            if ord(index_tuple[STR][0]) == event.keyval:
+                self.actions[index_tuple]()
 
     def menu(self, widget, choice):
-        # 1 => shutdown
-        # 2 => reboot
-        # 3 => logout
-        if 1  == choice:
-            self.shutdown()
-        elif 2 == choice:
-            self.reboot()
-        elif 3 == choice:
-            self.logout()
-        else:
-            print(error)
+        for index_tuple in self.actions.keys():
+            if choice == index_tuple[NUM]:
+                self.actions[index_tuple]()
 
     def shutdown(self):
         os.system("shutdown -P now")
@@ -65,7 +60,7 @@ class PowerMenu():
         os.system("pkill -u " + username)
 
     def run(self):
-        gtk.main()
+        Gtk.main()
 
 menu = PowerMenu()
 menu.run()
